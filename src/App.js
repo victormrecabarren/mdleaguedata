@@ -349,23 +349,11 @@ function App() {
             <div className="line-chart-container">
               <Line
                 data={{
-                  labels: [
-                    "1",
-                    "2",
-                    "3",
-                    "4",
-                    "5",
-                    "6",
-                    "7",
-                    "8",
-                    "9",
-                    "10",
-                    "11",
-                  ],
+                  labels: matchups.map((week, i) => i + 1),
                   datasets: [
                     {
-                      label: "My First Dataset",
-                      data: [65, 59, 80, 81, 56, 55, 77, 55, 69, 75, 77],
+                      label: "Avg PF",
+                      data: matchups.map((week) => week.averageOutput),
                       fill: true,
                       backgroundColor: (context) => {
                         const ctx = context.chart.ctx;
@@ -383,6 +371,14 @@ function App() {
                 }}
                 options={{
                   maintainAspectRatio: false,
+                  hover: {
+                    mode: "nearest",
+                    intersect: false,
+                  },
+                  interaction: {
+                    intersect: false,
+                    mode: "x",
+                  },
                   plugins: {
                     legend: {
                       display: false,
@@ -399,8 +395,8 @@ function App() {
                       },
                     },
                     y: {
-                      min: 20,
-                      max: 100,
+                      min: 60,
+                      max: 130,
                       grid: {
                         display: true,
                         color: "rgba(255,255,255, 0.3)",
