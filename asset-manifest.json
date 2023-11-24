@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/mdleaguedata/static/css/main.60e5cb35.css",
-    "main.js": "/mdleaguedata/static/js/main.f488a548.js",
+    "main.css": "/mdleaguedata/static/css/main.7435bbec.css",
+    "main.js": "/mdleaguedata/static/js/main.cb054d41.js",
     "static/js/787.51cd9d72.chunk.js": "/mdleaguedata/static/js/787.51cd9d72.chunk.js",
-    "static/media/Nfl_Black_Svg.svg": "/mdleaguedata/static/media/Nfl_Black_Svg.7272bfaf6abf51ff0b3470f52da70bf4.svg",
+    "static/media/Nfl_Black_Svg.svg": "/mdleaguedata/static/media/Nfl_Black_Svg.c734d36ad3cd8577e8f459d2fd8853e6.svg",
     "index.html": "/mdleaguedata/index.html",
-    "main.60e5cb35.css.map": "/mdleaguedata/static/css/main.60e5cb35.css.map",
-    "main.f488a548.js.map": "/mdleaguedata/static/js/main.f488a548.js.map",
+    "main.7435bbec.css.map": "/mdleaguedata/static/css/main.7435bbec.css.map",
+    "main.cb054d41.js.map": "/mdleaguedata/static/js/main.cb054d41.js.map",
     "787.51cd9d72.chunk.js.map": "/mdleaguedata/static/js/787.51cd9d72.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.60e5cb35.css",
-    "static/js/main.f488a548.js"
+    "static/css/main.7435bbec.css",
+    "static/js/main.cb054d41.js"
   ]
 }
