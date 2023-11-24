@@ -455,7 +455,7 @@ function App() {
           </div>
         </div>
         <div className="row">
-          <div className="line-chart-box"></div>
+          <div className="last-box">Coming soon...</div>
         </div>
       </div>
       {/* <div className="App-header">
