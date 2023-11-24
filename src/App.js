@@ -17,6 +17,7 @@ import {
   leagueEndpoint,
   rostersEndpoint,
   columnDefs,
+  userDictionary,
 } from "./config";
 import { users } from "./league-users";
 // import { DataTable } from "./components/DataTable";
@@ -73,6 +74,8 @@ function App() {
         return {
           id: user.user_id,
           user: user.display_name,
+          userName: user.display_name,
+          realName: userDictionary[user.display_name],
           standing: 0,
           maxPF: userMaxPF,
           PF: userPF,

@@ -73,3 +73,18 @@ export const mdLeagueId = "979172943752171520";
 
 export const rostersEndpoint = `https://api.sleeper.app/v1/league/${mdLeagueId}/rosters`;
 export const leagueEndpoint = `https://api.sleeper.app/v1/league/${mdLeagueId}`;
+
+export const userDictionary = {
+  itschriscas: "Chris",
+  BigP93: "Phillip",
+  slullkrow: "Brandon",
+  AlfonsoRose93: "Sergio",
+  HurtsLikeH3ll: "Carlos",
+  ResurrectionOfBigSex: "Nova",
+  itsghosty: "Alejandro ",
+  OwnedbyBazooka: "Ryan",
+  BigShmegma: "Teferi",
+  victormrecabarren: "Victor",
+  OMejia91: "Oscar",
+  ahuezo: "Alvaro",
+};
