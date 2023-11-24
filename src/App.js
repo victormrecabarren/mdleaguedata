@@ -338,11 +338,13 @@ function App() {
                   onChange={handleChartSelection}
                 >
                   <Select.Option value="league">League</Select.Option>
-                  <Select.Option value="ryan">Ryan</Select.Option>
-                  <Select.Option value="carlos">Carlos</Select.Option>
-                  <Select.Option value="carlos">Teferi</Select.Option>
-                  <Select.Option value="carlos">Brandon</Select.Option>
-                  <Select.Option value="carlos">Nova</Select.Option>
+                  {owners.map((owner) => {
+                    return (
+                      <Select.Option value={owner.realName}>
+                        {owner.realName}
+                      </Select.Option>
+                    );
+                  })}
                 </Select>
               </div>
             </div>
