@@ -38,6 +38,7 @@ function App() {
     PA: false,
     leftOnBench: false,
   });
+  const [selectedOwner, setSelectedOwner] = useState();
 
   const handleSelection = (selection) => {
     setSelections((prevSelected) => {
@@ -51,7 +52,7 @@ function App() {
   };
 
   const handleChartSelection = (selection) => {
-    console.log(selection);
+    setSelectedOwner(selection);
   };
 
   useEffect(() => {
@@ -133,9 +134,19 @@ function App() {
               week: i + 1,
               combinedPoints,
               averageOutput,
+              rosters: week.map((roster) => {
+                const currUser = formattedWithStandings.find(
+                  (formattedUser) => formattedUser.rosterId === roster.roster_id
+                );
+                return {
+                  rosterId: roster.roster_id,
+                  points: roster.points,
+                  owner: currUser.userName,
+                  realName: currUser.realName,
+                };
+              }),
             };
           });
-          console.log(bestPerformance);
           console.log(formattedWithStandings);
           setMetadata((prevData) => ({
             ...prevData,
@@ -369,6 +380,36 @@ function App() {
                       tension: 0.1,
                       pointRadius: 0,
                     },
+                    ...(selectedOwner && selectedOwner !== "league"
+                      ? [
+                          {
+                            label: "Points Scored",
+                            data: matchups.map((week) => {
+                              const currRoster = week.rosters.find(
+                                (roster) => roster.realName === selectedOwner
+                              );
+                              return currRoster.points;
+                            }),
+                            fill: true,
+                            backgroundColor: (context) => {
+                              const ctx = context.chart.ctx;
+                              const gradient = ctx.createLinearGradient(
+                                0,
+                                0,
+                                0,
+                                90
+                              );
+                              gradient.addColorStop(0, "rgba(0,71,255,1)");
+                              gradient.addColorStop(1, "rgba(0,71,255,0)");
+                              return gradient;
+                            },
+                            borderColor: "rgb(0,71,255)",
+                            borderWidth: 4,
+                            tension: 0.1,
+                            pointRadius: 0,
+                          },
+                        ]
+                      : []),
                   ],
                 }}
                 options={{
@@ -397,8 +438,8 @@ function App() {
                       },
                     },
                     y: {
-                      min: 60,
-                      max: 130,
+                      // min: 60,
+                      // max: 130,
                       grid: {
                         display: true,
                         color: "rgba(255,255,255, 0.3)",
