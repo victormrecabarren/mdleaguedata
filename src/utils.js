@@ -23,3 +23,11 @@ export const getStandings = (rosters) => {
   console.log(rosters);
   return rosters;
 };
+export const getLongestStreak = (winlosses, matchString) => {
+  const regex = new RegExp(`(?:${matchString})+`, "g");
+  const matches = winlosses.match(regex);
+  const longestStreak = matches.reduce((longest, next) => {
+    return longest.length > next.length ? longest : next;
+  }, "");
+  return longestStreak.length;
+};

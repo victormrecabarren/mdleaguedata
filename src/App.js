@@ -2,7 +2,7 @@ import "./App.css";
 import logo from "./Nfl_Black_Svg.svg";
 import leagueAvi from "./league-avi.png";
 import { useEffect, useState } from "react";
-import { getStandings } from "./utils";
+import { getStandings, getLongestStreak } from "./utils";
 
 import { Chart as ChartJS } from "chart.js/auto";
 import { Line } from "react-chartjs-2";
@@ -16,6 +16,7 @@ import {
   PADec,
   leagueEndpoint,
   rostersEndpoint,
+  matchupsEndpoint,
   columnDefs,
   userDictionary,
 } from "./config";
@@ -25,6 +26,8 @@ import { Select } from "antd";
 
 function App() {
   const [owners, setOwners] = useState([]);
+  const [matchups, setMatchups] = useState([]);
+  const [metadata, setMetadata] = useState({});
   const [columns, setCurrentColumns] = useState([]);
   const [selections, setSelections] = useState({
     record: false,
@@ -84,20 +87,115 @@ function App() {
           record: `${roster.settings.wins}-${roster.settings.losses}`,
           wins: roster.settings.wins,
           losses: roster.settings.losses,
-          leftOnBench: `${Math.round((userMaxPF - userPF) * 100) / 100} (${
-            Math.round(((userMaxPF - userPF) / gamesPlayed) * 100) / 100
-          })`,
+          leftOnBench: Math.round((userMaxPF - userPF) * 100) / 100,
+          leftOnBenchAvg:
+            Math.round(((userMaxPF - userPF) / gamesPlayed) * 100) / 100,
           averagePF: Math.round((userPF / gamesPlayed) * 100) / 100,
           averageMaxPF: Math.round((userMaxPF / gamesPlayed) * 100) / 100,
+          winStreak: getLongestStreak(roster.metadata.record, "W"),
+          lossStreak: getLongestStreak(roster.metadata.record, "L"),
+          rosterId: roster.roster_id,
         };
       });
       const formattedWithStandings = getStandings(formattedUserData);
       setOwners(formattedWithStandings);
+
+      let bestPerformance = {
+        points: 0,
+        rosterId: null,
+        week: 0,
+      };
+
+      // Get matchup data:
+      const matchupPromises = Array.from(Array(gamesPlayed))
+        .fill(0)
+        .map((n, i) => {
+          return fetch(`${matchupsEndpoint}/${i + 1}`);
+        });
+      Promise.all(matchupPromises)
+        .then((promises) =>
+          Promise.all(promises.map((matchupRes) => matchupRes.json()))
+        )
+        .then((allJson) => {
+          const updatedMatchups = allJson.map((week, i) => {
+            let combinedPoints = week.reduce((agg, b) => {
+              if (b.points > bestPerformance.points) {
+                bestPerformance.points = b.points;
+                bestPerformance.rosterId = b.roster_id;
+                bestPerformance.week = i + 1;
+              }
+              return agg + b.points;
+            }, 0);
+            combinedPoints = Math.round(combinedPoints * 100) / 100;
+            const averageOutput = Math.round((combinedPoints / 12) * 100) / 100;
+
+            return {
+              week: i + 1,
+              combinedPoints,
+              averageOutput,
+            };
+          });
+          console.log(bestPerformance);
+          console.log(formattedWithStandings);
+          setMetadata((prevData) => ({
+            ...prevData,
+            bestPerformance: {
+              owner: formattedWithStandings.find(
+                (owner) => owner.rosterId === bestPerformance.rosterId
+              ),
+              score: bestPerformance.points,
+              week: bestPerformance.week,
+            },
+          }));
+
+          setMatchups(updatedMatchups);
+        });
+
+      // Get other metadata and store in state:
+      let highestPointsFor;
+      let startSitAccuracy;
+      let longestWinStreak;
+      let benchPointsWinner;
+      let longestLossStreak;
+
+      formattedWithStandings.forEach((owner) => {
+        if (!highestPointsFor) {
+          highestPointsFor = owner;
+          startSitAccuracy = owner;
+          longestWinStreak = owner;
+          benchPointsWinner = owner;
+          longestLossStreak = owner;
+        } else {
+          if (owner.PF > highestPointsFor.PF) {
+            highestPointsFor = owner;
+          }
+          if (owner.accuracy > startSitAccuracy.accuracy) {
+            startSitAccuracy = owner;
+          }
+          if (owner.winStreak > longestWinStreak.winStreak) {
+            longestWinStreak = owner;
+          }
+          if (owner.leftOnBench > benchPointsWinner.leftOnBench) {
+            benchPointsWinner = owner;
+          }
+          if (owner.lossStreak > longestLossStreak.lossStreak) {
+            longestLossStreak = owner;
+          }
+        }
+      });
+      setMetadata((prevData) => ({
+        ...prevData,
+        highestPointsFor,
+        startSitAccuracy,
+        benchPointsWinner,
+        longestLossStreak,
+        longestWinStreak,
+      }));
     };
     fetchLeagueData();
   }, []);
-  const selectedStyle = "#1a4486";
-  const nonSelectedStyle = "#1d1d1d";
+
+  const oneSeed = owners.find((owner) => owner.standing === 1);
   return (
     <div className="App">
       <div className="App-header">
@@ -128,16 +226,24 @@ function App() {
           <div className="top-left-col">
             <div className="one-seed-box">
               <div className="one-seed-text">The #1 Seed</div>
-              <div className="one-seed-owner">Carlos</div>
-              <div className="one-seed-details">8-3 / 1200 PF</div>
+              <div className="one-seed-owner">{oneSeed?.realName}</div>
+              <div className="one-seed-details">
+                {`${oneSeed?.record} / ${oneSeed?.PF}`}
+              </div>
             </div>
             <div className="best-performance-box">
               <div className="perf-top-row">Top Performance</div>
               <div className="perf-bottom-row">
-                <div className="perf-left-col">180.98</div>
+                <div className="perf-left-col">
+                  {metadata.bestPerformance?.score}
+                </div>
                 <div className="perf-right-col">
-                  <div className="perf-week">Week 4</div>
-                  <div className="perf-team">Ryan</div>
+                  <div className="perf-week">
+                    Week {metadata.bestPerformance?.week}
+                  </div>
+                  <div className="perf-team">
+                    {metadata.bestPerformance?.owner.realName}
+                  </div>
                 </div>
               </div>
             </div>
@@ -147,33 +253,65 @@ function App() {
               <div className="summary-header">Leaders</div>
               <div className="summary-items-container">
                 <div className="summary-item">
-                  <div className="summary-data-point">1300</div>
+                  <div className="summary-data-point">
+                    {metadata.highestPointsFor
+                      ? Math.trunc(metadata.highestPointsFor.PF)
+                      : "..."}
+                  </div>
                   <div className="summary-description-container">
                     <div className="summary-description">Points For</div>
-                    <div className="summary-description-leader">carlos</div>
+                    <div className="summary-description-leader">
+                      {metadata.highestPointsFor
+                        ? metadata.highestPointsFor.realName.toLowerCase()
+                        : "..."}
+                    </div>
                   </div>
                 </div>
                 <div className="summary-item">
-                  <div className="summary-data-point">91%</div>
+                  <div className="summary-data-point">
+                    {metadata.highestPointsFor
+                      ? `${metadata.startSitAccuracy.accuracy * 100}%`
+                      : "..."}
+                  </div>
                   <div className="summary-description-container">
                     <div className="summary-description">
                       Start/Sit Accuracy
                     </div>
-                    <div className="summary-description-leader">victor</div>
+                    <div className="summary-description-leader">
+                      {metadata.highestPointsFor
+                        ? metadata.startSitAccuracy.realName.toLowerCase()
+                        : "..."}
+                    </div>
                   </div>
                 </div>
                 <div className="summary-item">
-                  <div className="summary-data-point">5</div>
+                  <div className="summary-data-point">
+                    {metadata.longestWinStreak
+                      ? metadata.longestWinStreak.winStreak
+                      : "..."}
+                  </div>
                   <div className="summary-description-container">
                     <div className="summary-description">Win Streak</div>
-                    <div className="summary-description-leader">victor</div>
+                    <div className="summary-description-leader">
+                      {metadata.longestWinStreak
+                        ? metadata.longestWinStreak.realName.toLowerCase()
+                        : "..."}
+                    </div>
                   </div>
                 </div>
                 <div className="summary-item">
-                  <div className="summary-data-point negative">140</div>
+                  <div className="summary-data-point negative">
+                    {metadata.benchPointsWinner
+                      ? Math.trunc(metadata.benchPointsWinner.leftOnBench)
+                      : "..."}
+                  </div>
                   <div className="summary-description-container">
                     <div className="summary-description">Bench Points</div>
-                    <div className="summary-description-leader">oscar</div>
+                    <div className="summary-description-leader">
+                      {metadata.highestPointsFor
+                        ? metadata.benchPointsWinner.realName.toLowerCase()
+                        : "..."}
+                    </div>
                   </div>
                 </div>
                 <div className="summary-item">

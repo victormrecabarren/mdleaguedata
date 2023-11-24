@@ -71,6 +71,7 @@ export const PADec = "fpts_against_decimal";
 
 export const mdLeagueId = "979172943752171520";
 
+export const matchupsEndpoint = `https://api.sleeper.app/v1/league/${mdLeagueId}/matchups`;
 export const rostersEndpoint = `https://api.sleeper.app/v1/league/${mdLeagueId}/rosters`;
 export const leagueEndpoint = `https://api.sleeper.app/v1/league/${mdLeagueId}`;
 
