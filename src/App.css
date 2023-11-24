@@ -81,6 +81,7 @@ html, body {
   font-size: 18px;
   color: rgb(100, 100, 100);
   font-weight: 100;
+  cursor: pointer;
 }
 
 .selected-nav-button {
