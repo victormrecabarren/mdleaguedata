@@ -326,10 +326,18 @@ function App() {
                   </div>
                 </div>
                 <div className="summary-item">
-                  <div className="summary-data-point negative">6</div>
+                  <div className="summary-data-point negative">
+                    {metadata.longestLossStreak
+                      ? metadata.longestLossStreak.lossStreak
+                      : "..."}
+                  </div>
                   <div className="summary-description-container">
                     <div className="summary-description">Loss Streak</div>
-                    <div className="summary-description-leader">nova</div>
+                    <div className="summary-description-leader">
+                      {metadata.longestLossStreak
+                        ? metadata.longestLossStreak.realName.toLowerCase()
+                        : "..."}
+                    </div>
                   </div>
                 </div>
               </div>
