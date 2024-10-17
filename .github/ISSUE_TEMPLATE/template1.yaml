@@ -5,7 +5,7 @@ body:
     value: Hello world!
 - type: input
   attributes:
-    label: Password
+    label: Username
 description: Test.
 title: "[Bug]: "
 labels: ["bug", "triage"]
