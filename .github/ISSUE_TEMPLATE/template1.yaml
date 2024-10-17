@@ -1,4 +1,11 @@
 name: Test
+body:
+- type: markdown
+  attributes:
+    value: Hello world!
+- type: input
+  attributes:
+    label: Password
 description: Test.
 title: "[Bug]: "
 labels: ["bug", "triage"]
