@@ -18,6 +18,8 @@ html, body {
   background-color:rgb(248, 248, 248);
   min-height: 95vh;
   display: flex;
+  max-width: 900px;
+  margin: auto;
   flex-direction: column;
   align-items: center;
   font-family: Tahoma, sans-serif;
