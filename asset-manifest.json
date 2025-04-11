@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/mdleaguedata/static/css/main.da4ed5f3.css",
+    "main.css": "/mdleaguedata/static/css/main.d6a165e0.css",
     "main.js": "/mdleaguedata/static/js/main.b992d5f6.js",
     "static/js/787.51cd9d72.chunk.js": "/mdleaguedata/static/js/787.51cd9d72.chunk.js",
     "static/media/Nfl_Black_Svg.svg": "/mdleaguedata/static/media/Nfl_Black_Svg.c734d36ad3cd8577e8f459d2fd8853e6.svg",
     "index.html": "/mdleaguedata/index.html",
-    "main.da4ed5f3.css.map": "/mdleaguedata/static/css/main.da4ed5f3.css.map",
+    "main.d6a165e0.css.map": "/mdleaguedata/static/css/main.d6a165e0.css.map",
     "main.b992d5f6.js.map": "/mdleaguedata/static/js/main.b992d5f6.js.map",
     "787.51cd9d72.chunk.js.map": "/mdleaguedata/static/js/787.51cd9d72.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.da4ed5f3.css",
+    "static/css/main.d6a165e0.css",
     "static/js/main.b992d5f6.js"
   ]
 }
