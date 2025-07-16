@@ -83,6 +83,9 @@ function App() {
           userName: user.display_name,
           realName: userDictionary[user.display_name],
           standing: 0,
+          seeds: {},
+          winCount: 0,
+          pointsCount: 0,
           maxPF: userMaxPF,
           PF: userPF,
           PA: userPA,
@@ -115,6 +118,7 @@ function App() {
         .map((n, i) => {
           return fetch(`${matchupsEndpoint}/${i + 1}`);
         });
+      // console.log(matchupPromises);
       Promise.all(matchupPromises)
         .then((promises) =>
           Promise.all(promises.map((matchupRes) => matchupRes.json()))
@@ -131,7 +135,6 @@ function App() {
             }, 0);
             combinedPoints = Math.round(combinedPoints * 100) / 100;
             const averageOutput = Math.round((combinedPoints / 12) * 100) / 100;
-
             return {
               week: i + 1,
               combinedPoints,
@@ -149,7 +152,7 @@ function App() {
               }),
             };
           });
-          console.log(formattedWithStandings);
+          // console.log(formattedWithStandings);
           setMetadata((prevData) => ({
             ...prevData,
             bestPerformance: {
@@ -162,8 +165,11 @@ function App() {
           }));
 
           setMatchups(updatedMatchups);
+          
+          // console.log(updatedMatchups);
         });
 
+        
       // Get other metadata and store in state:
       let highestPointsFor;
       let startSitAccuracy;
@@ -366,7 +372,7 @@ function App() {
                           <Select.Option value="league">League</Select.Option>
                           {owners.map((owner) => {
                             return (
-                              <Select.Option value={owner.realName}>
+                              <Select.Option value={owner.realName} key={owner.id}>
                                 {owner.realName}
                               </Select.Option>
                             );
@@ -540,7 +546,7 @@ function App() {
         </div>
       </div> */}
 
-        <Route path="/seed-trends" element={<SeedTrends />} />
+        <Route path="/seed-trends" element={<SeedTrends matchups={matchups} owners={owners}/>} />
       </Routes>
     </div>
   );
