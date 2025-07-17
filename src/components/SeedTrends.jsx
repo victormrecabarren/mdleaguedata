@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { leagueEndpoint } from "../config";
 import { matchupsEndpoint } from "../config";
-import { compileWeeklySeeds } from "../utils";
+import { compileWeeklySeeds } from "../utils/utils";
 
 const SeedTrends = (props) => {
     // console.log('Owners', props.owners)

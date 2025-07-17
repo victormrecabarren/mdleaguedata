@@ -4,7 +4,7 @@ import leagueAvi from "./league-avi.png";
 import { useEffect, useState } from "react";
 import { Route, Routes } from "react-router";
 import SeedTrends from "./components/SeedTrends";
-import { getStandings, getLongestStreak } from "./utils";
+import { getStandings, getLongestStreak } from "./utils/utils";
 
 import { Chart as ChartJS } from "chart.js/auto";
 import { Line } from "react-chartjs-2";
