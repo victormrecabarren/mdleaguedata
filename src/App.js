@@ -2,7 +2,9 @@ import "./App.css";
 import logo from "./Nfl_Black_Svg.svg";
 import leagueAvi from "./league-avi.png";
 import { useEffect, useState } from "react";
-import { getStandings, getLongestStreak } from "./utils";
+import { Route, Routes } from "react-router";
+import SeedTrends from "./components/SeedTrends";
+import { getStandings, getLongestStreak } from "./utils/utils";
 
 import { Chart as ChartJS } from "chart.js/auto";
 import { Line } from "react-chartjs-2";
@@ -81,6 +83,9 @@ function App() {
           userName: user.display_name,
           realName: userDictionary[user.display_name],
           standing: 0,
+          seeds: {},
+          winCount: 0,
+          pointsCount: 0,
           maxPF: userMaxPF,
           PF: userPF,
           PA: userPA,
@@ -113,6 +118,7 @@ function App() {
         .map((n, i) => {
           return fetch(`${matchupsEndpoint}/${i + 1}`);
         });
+      // console.log(matchupPromises);
       Promise.all(matchupPromises)
         .then((promises) =>
           Promise.all(promises.map((matchupRes) => matchupRes.json()))
@@ -129,7 +135,6 @@ function App() {
             }, 0);
             combinedPoints = Math.round(combinedPoints * 100) / 100;
             const averageOutput = Math.round((combinedPoints / 12) * 100) / 100;
-
             return {
               week: i + 1,
               combinedPoints,
@@ -147,7 +152,7 @@ function App() {
               }),
             };
           });
-          console.log(formattedWithStandings);
+          // console.log(formattedWithStandings);
           setMetadata((prevData) => ({
             ...prevData,
             bestPerformance: {
@@ -160,8 +165,11 @@ function App() {
           }));
 
           setMatchups(updatedMatchups);
+          
+          // console.log(updatedMatchups);
         });
 
+        
       // Get other metadata and store in state:
       let highestPointsFor;
       let startSitAccuracy;
@@ -209,264 +217,271 @@ function App() {
   const oneSeed = owners.find((owner) => owner.standing === 1);
   return (
     <div className="App">
-      <div className="App-header">
-        <div className="title-container">
-          <span className="App-title">MDL Dash</span>
-          <img src={logo} id="nfl-avi" alt="nfl avi" />
-        </div>
-        <div>
-          <a
-            className="unset-link-style"
-            target="_blank"
-            rel="noreferrer"
-            href="https://sleeper.com/leagues/979172943752171520/league"
-          >
-            <img src={leagueAvi} id="league-avi" alt="league avi" />
-          </a>
-        </div>
-      </div>
-      <div className="App-navbar noselect">
-        <div className="navbar-buttons-container">
-          <div className="nav-buttons selected-nav-button">Dashboard</div>
-          <div className="nav-buttons">Owners</div>
-          <div className="nav-buttons">Trends</div>
-        </div>
-      </div>
-      <div className="App-content">
-        <div className="top-row">
-          <div className="top-left-col">
-            <div className="one-seed-box">
-              <div className="one-seed-text">The #1 Seed</div>
-              <div className="one-seed-owner">{oneSeed?.realName}</div>
-              <div className="one-seed-details">
-                {`${oneSeed?.record} / ${oneSeed?.PF}`}
-              </div>
-            </div>
-            <div className="best-performance-box">
-              <div className="perf-top-row">Top Performance</div>
-              <div className="perf-bottom-row">
-                <div className="perf-left-col">
-                  {metadata.bestPerformance?.score}
+      <Routes>
+        <Route
+          path="/mdleaguedata"
+          element={
+            <>
+              <div className="App-header">
+                <div className="title-container">
+                  <span className="App-title">MDL Dash</span>
+                  <img src={logo} id="nfl-avi" alt="nfl avi" />
                 </div>
-                <div className="perf-right-col">
-                  <div className="perf-week">
-                    Week {metadata.bestPerformance?.week}
-                  </div>
-                  <div className="perf-team">
-                    {metadata.bestPerformance?.owner.realName}
-                  </div>
+                <div>
+                  <a
+                    className="unset-link-style"
+                    target="_blank"
+                    rel="noreferrer"
+                    href="https://sleeper.com/leagues/979172943752171520/league"
+                  >
+                    <img src={leagueAvi} id="league-avi" alt="league avi" />
+                  </a>
                 </div>
               </div>
-            </div>
-          </div>
-          <div className="top-right-col">
-            <div className="summary-box">
-              <div className="summary-header">Leaders</div>
-              <div className="summary-items-container">
-                <div className="summary-item">
-                  <div className="summary-data-point">
-                    {metadata.highestPointsFor
-                      ? Math.trunc(metadata.highestPointsFor.PF)
-                      : "..."}
-                  </div>
-                  <div className="summary-description-container">
-                    <div className="summary-description">Points For</div>
-                    <div className="summary-description-leader">
-                      {metadata.highestPointsFor
-                        ? metadata.highestPointsFor.realName.toLowerCase()
-                        : "..."}
-                    </div>
-                  </div>
-                </div>
-                <div className="summary-item">
-                  <div className="summary-data-point">
-                    {metadata.highestPointsFor
-                      ? `${metadata.startSitAccuracy.accuracy * 100}%`
-                      : "..."}
-                  </div>
-                  <div className="summary-description-container">
-                    <div className="summary-description">
-                      Start/Sit Accuracy
-                    </div>
-                    <div className="summary-description-leader">
-                      {metadata.highestPointsFor
-                        ? metadata.startSitAccuracy.realName.toLowerCase()
-                        : "..."}
-                    </div>
-                  </div>
-                </div>
-                <div className="summary-item">
-                  <div className="summary-data-point">
-                    {metadata.longestWinStreak
-                      ? metadata.longestWinStreak.winStreak
-                      : "..."}
-                  </div>
-                  <div className="summary-description-container">
-                    <div className="summary-description">Win Streak</div>
-                    <div className="summary-description-leader">
-                      {metadata.longestWinStreak
-                        ? metadata.longestWinStreak.realName.toLowerCase()
-                        : "..."}
-                    </div>
-                  </div>
-                </div>
-                <div className="summary-item">
-                  <div className="summary-data-point negative">
-                    {metadata.benchPointsWinner
-                      ? Math.trunc(metadata.benchPointsWinner.leftOnBench)
-                      : "..."}
-                  </div>
-                  <div className="summary-description-container">
-                    <div className="summary-description">Bench Points</div>
-                    <div className="summary-description-leader">
-                      {metadata.highestPointsFor
-                        ? metadata.benchPointsWinner.realName.toLowerCase()
-                        : "..."}
-                    </div>
-                  </div>
-                </div>
-                <div className="summary-item">
-                  <div className="summary-data-point negative">
-                    {metadata.longestLossStreak
-                      ? metadata.longestLossStreak.lossStreak
-                      : "..."}
-                  </div>
-                  <div className="summary-description-container">
-                    <div className="summary-description">Loss Streak</div>
-                    <div className="summary-description-leader">
-                      {metadata.longestLossStreak
-                        ? metadata.longestLossStreak.realName.toLowerCase()
-                        : "..."}
-                    </div>
-                  </div>
+              <div className="App-navbar noselect">
+                <div className="navbar-buttons-container">
+                  <div className="nav-buttons selected-nav-button">Dashboard</div>
+                  <div className="nav-buttons">Owners</div>
+                  <div className="nav-buttons">Trends</div>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-        <div className="row">
-          <div className="line-chart-box">
-            <div className="line-chart-header">
-              <div className="line-chart-title">Average Score</div>
-              <div className="line-chart-selector">
-                <Select
-                  className="antd-selector"
-                  defaultValue="league"
-                  style={{ width: 90 }}
-                  selectedStyle={{ backgroundColor: "transparent" }}
-                  onChange={handleChartSelection}
-                >
-                  <Select.Option value="league">League</Select.Option>
-                  {owners.map((owner) => {
-                    return (
-                      <Select.Option value={owner.realName}>
-                        {owner.realName}
-                      </Select.Option>
-                    );
-                  })}
-                </Select>
-              </div>
-            </div>
-            <div className="line-chart-container">
-              <Line
-                data={{
-                  labels: matchups.map((week, i) => i + 1),
-                  datasets: [
-                    {
-                      label: "Avg PF",
-                      data: matchups.map((week) => week.averageOutput),
-                      fill: true,
-                      backgroundColor: (context) => {
-                        const ctx = context.chart.ctx;
-                        const gradient = ctx.createLinearGradient(0, 0, 0, 90);
-                        gradient.addColorStop(0, "rgba(231,255,133,1)");
-                        gradient.addColorStop(1, "rgba(231,255,133,0)");
-                        return gradient;
-                      },
-                      borderColor: "rgb(231,255,133)",
-                      borderWidth: 4,
-                      tension: 0.1,
-                      pointRadius: 0,
-                    },
-                    ...(selectedOwner && selectedOwner !== "league"
-                      ? [
-                          {
-                            label: "Points Scored",
-                            data: matchups.map((week) => {
-                              const currRoster = week.rosters.find(
-                                (roster) => roster.realName === selectedOwner
-                              );
-                              return currRoster.points;
-                            }),
-                            fill: true,
-                            backgroundColor: (context) => {
-                              const ctx = context.chart.ctx;
-                              const gradient = ctx.createLinearGradient(
-                                0,
-                                0,
-                                0,
-                                90
-                              );
-                              gradient.addColorStop(0, "rgba(0,71,255,1)");
-                              gradient.addColorStop(1, "rgba(0,71,255,0)");
-                              return gradient;
+              <div className="App-content">
+                <div className="top-row">
+                  <div className="top-left-col">
+                    <div className="one-seed-box">
+                      <div className="one-seed-text">The #1 Seed</div>
+                      <div className="one-seed-owner">{oneSeed?.realName}</div>
+                      <div className="one-seed-details">
+                        {`${oneSeed?.record} / ${oneSeed?.PF}`}
+                      </div>
+                    </div>
+                    <div className="best-performance-box">
+                      <div className="perf-top-row">Top Performance</div>
+                      <div className="perf-bottom-row">
+                        <div className="perf-left-col">
+                          {metadata.bestPerformance?.score}
+                        </div>
+                        <div className="perf-right-col">
+                          <div className="perf-week">
+                            Week {metadata.bestPerformance?.week}
+                          </div>
+                          <div className="perf-team">
+                            {metadata.bestPerformance?.owner.realName}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="top-right-col">
+                    <div className="summary-box">
+                      <div className="summary-header">Leaders</div>
+                      <div className="summary-items-container">
+                        <div className="summary-item">
+                          <div className="summary-data-point">
+                            {metadata.highestPointsFor
+                              ? Math.trunc(metadata.highestPointsFor.PF)
+                              : "..."}
+                          </div>
+                          <div className="summary-description-container">
+                            <div className="summary-description">Points For</div>
+                            <div className="summary-description-leader">
+                              {metadata.highestPointsFor
+                                ? metadata.highestPointsFor.realName.toLowerCase()
+                                : "..."}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="summary-item">
+                          <div className="summary-data-point">
+                            {metadata.highestPointsFor
+                              ? `${metadata.startSitAccuracy.accuracy * 100}%`
+                              : "..."}
+                          </div>
+                          <div className="summary-description-container">
+                            <div className="summary-description">
+                              Start/Sit Accuracy
+                            </div>
+                            <div className="summary-description-leader">
+                              {metadata.highestPointsFor
+                                ? metadata.startSitAccuracy.realName.toLowerCase()
+                                : "..."}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="summary-item">
+                          <div className="summary-data-point">
+                            {metadata.longestWinStreak
+                              ? metadata.longestWinStreak.winStreak
+                              : "..."}
+                          </div>
+                          <div className="summary-description-container">
+                            <div className="summary-description">Win Streak</div>
+                            <div className="summary-description-leader">
+                              {metadata.longestWinStreak
+                                ? metadata.longestWinStreak.realName.toLowerCase()
+                                : "..."}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="summary-item">
+                          <div className="summary-data-point negative">
+                            {metadata.benchPointsWinner
+                              ? Math.trunc(metadata.benchPointsWinner.leftOnBench)
+                              : "..."}
+                          </div>
+                          <div className="summary-description-container">
+                            <div className="summary-description">Bench Points</div>
+                            <div className="summary-description-leader">
+                              {metadata.highestPointsFor
+                                ? metadata.benchPointsWinner.realName.toLowerCase()
+                                : "..."}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="summary-item">
+                          <div className="summary-data-point negative">
+                            {metadata.longestLossStreak
+                              ? metadata.longestLossStreak.lossStreak
+                              : "..."}
+                          </div>
+                          <div className="summary-description-container">
+                            <div className="summary-description">Loss Streak</div>
+                            <div className="summary-description-leader">
+                              {metadata.longestLossStreak
+                                ? metadata.longestLossStreak.realName.toLowerCase()
+                                : "..."}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="line-chart-box">
+                    <div className="line-chart-header">
+                      <div className="line-chart-title">Average Score</div>
+                      <div className="line-chart-selector">
+                        <Select
+                          className="antd-selector"
+                          defaultValue="league"
+                          style={{ width: 90 }}
+                          selectedStyle={{ backgroundColor: "transparent" }}
+                          onChange={handleChartSelection}
+                        >
+                          <Select.Option value="league">League</Select.Option>
+                          {owners.map((owner) => {
+                            return (
+                              <Select.Option value={owner.realName} key={owner.id}>
+                                {owner.realName}
+                              </Select.Option>
+                            );
+                          })}
+                        </Select>
+                      </div>
+                    </div>
+                    <div className="line-chart-container">
+                      <Line
+                        data={{
+                          labels: matchups.map((week, i) => i + 1),
+                          datasets: [
+                            {
+                              label: "Avg PF",
+                              data: matchups.map((week) => week.averageOutput),
+                              fill: true,
+                              backgroundColor: (context) => {
+                                const ctx = context.chart.ctx;
+                                const gradient = ctx.createLinearGradient(0, 0, 0, 90);
+                                gradient.addColorStop(0, "rgba(231,255,133,1)");
+                                gradient.addColorStop(1, "rgba(231,255,133,0)");
+                                return gradient;
+                              },
+                              borderColor: "rgb(231,255,133)",
+                              borderWidth: 4,
+                              tension: 0.1,
+                              pointRadius: 0,
                             },
-                            borderColor: "rgb(0,71,255)",
-                            borderWidth: 4,
-                            tension: 0.1,
-                            pointRadius: 0,
+                            ...(selectedOwner && selectedOwner !== "league"
+                              ? [
+                                {
+                                  label: "Points Scored",
+                                  data: matchups.map((week) => {
+                                    const currRoster = week.rosters.find(
+                                      (roster) => roster.realName === selectedOwner
+                                    );
+                                    return currRoster.points;
+                                  }),
+                                  fill: true,
+                                  backgroundColor: (context) => {
+                                    const ctx = context.chart.ctx;
+                                    const gradient = ctx.createLinearGradient(
+                                      0,
+                                      0,
+                                      0,
+                                      90
+                                    );
+                                    gradient.addColorStop(0, "rgba(0,71,255,1)");
+                                    gradient.addColorStop(1, "rgba(0,71,255,0)");
+                                    return gradient;
+                                  },
+                                  borderColor: "rgb(0,71,255)",
+                                  borderWidth: 4,
+                                  tension: 0.1,
+                                  pointRadius: 0,
+                                },
+                              ]
+                              : []),
+                          ],
+                        }}
+                        options={{
+                          maintainAspectRatio: false,
+                          hover: {
+                            mode: "nearest",
+                            intersect: false,
                           },
-                        ]
-                      : []),
-                  ],
-                }}
-                options={{
-                  maintainAspectRatio: false,
-                  hover: {
-                    mode: "nearest",
-                    intersect: false,
-                  },
-                  interaction: {
-                    intersect: false,
-                    mode: "x",
-                  },
-                  plugins: {
-                    legend: {
-                      display: false,
-                    },
-                  },
-                  scales: {
-                    x: {
-                      grid: {
-                        display: false,
-                        color: "#FFFFFF",
-                      },
-                      ticks: {
-                        display: false,
-                      },
-                    },
-                    y: {
-                      // min: 60,
-                      // max: 130,
-                      grid: {
-                        display: true,
-                        color: "rgba(255,255,255, 0.3)",
-                      },
-                      ticks: {
-                        color: "rgb(0,71,255)",
-                      },
-                    },
-                  },
-                }}
-              />
-            </div>
-          </div>
-        </div>
-        <div className="row">
-          <div className="last-box">Coming soon...</div>
-        </div>
-      </div>
-      {/* <div className="App-header">
+                          interaction: {
+                            intersect: false,
+                            mode: "x",
+                          },
+                          plugins: {
+                            legend: {
+                              display: false,
+                            },
+                          },
+                          scales: {
+                            x: {
+                              grid: {
+                                display: false,
+                                color: "#FFFFFF",
+                              },
+                              ticks: {
+                                display: false,
+                              },
+                            },
+                            y: {
+                              // min: 60,
+                              // max: 130,
+                              grid: {
+                                display: true,
+                                color: "rgba(255,255,255, 0.3)",
+                              },
+                              ticks: {
+                                color: "rgb(0,71,255)",
+                              },
+                            },
+                          },
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="last-box">Coming soon...</div>
+                </div>
+              </div>
+            </>
+          } />
+        {/* <div className="App-header">
         <img src={logo} height="50px" className="logo" />
         <span className="title">Maryland League</span>
       </div>
@@ -530,6 +545,9 @@ function App() {
           <DataTable owners={owners} columnDefs={columns} />
         </div>
       </div> */}
+
+        <Route path="/seed-trends" element={<SeedTrends matchups={matchups} owners={owners}/>} />
+      </Routes>
     </div>
   );
 }
