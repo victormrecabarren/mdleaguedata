@@ -20,9 +20,9 @@ export const getStandings = (rosters) => {
     roster.user = `${i + 1}) ${roster.user}`;
     roster.standing = i + 1;
   });
-  console.log(rosters);
   return rosters;
 };
+
 export const getLongestStreak = (winlosses, matchString) => {
   const regex = new RegExp(`(?:${matchString})+`, "g");
   const matches = winlosses.match(regex);
