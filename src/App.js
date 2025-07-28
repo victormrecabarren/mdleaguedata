@@ -118,7 +118,6 @@ function App() {
         .map((n, i) => {
           return fetch(`${matchupsEndpoint}/${i + 1}`);
         });
-      // console.log(matchupPromises);
       Promise.all(matchupPromises)
         .then((promises) =>
           Promise.all(promises.map((matchupRes) => matchupRes.json()))
@@ -152,7 +151,6 @@ function App() {
               }),
             };
           });
-          // console.log(formattedWithStandings);
           setMetadata((prevData) => ({
             ...prevData,
             bestPerformance: {
@@ -165,8 +163,6 @@ function App() {
           }));
 
           setMatchups(updatedMatchups);
-          
-          // console.log(updatedMatchups);
         });
 
         
@@ -288,7 +284,7 @@ function App() {
                               {metadata.highestPointsFor
                                 ? metadata.highestPointsFor.realName.toLowerCase()
                                 : "..."}
-                            </div>
+                            </div>ƒconsole
                           </div>
                         </div>
                         <div className="summary-item">
