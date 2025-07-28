@@ -215,7 +215,7 @@ function App() {
     <div className="App">
       <Routes>
         <Route
-          path="/mdleaguedata"
+          path="/"
           element={
             <>
               <div className="App-header">
