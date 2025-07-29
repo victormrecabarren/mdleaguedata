@@ -2,7 +2,7 @@ import "./App.css";
 import logo from "./Nfl_Black_Svg.svg";
 import leagueAvi from "./league-avi.png";
 import { useEffect, useState } from "react";
-import { Route, Routes } from "react-router";
+import { Route, Routes, Navigate } from "react-router";
 import SeedTrends from "./components/SeedTrends";
 import { getStandings, getLongestStreak } from "./utils/utils";
 
@@ -543,6 +543,7 @@ function App() {
       </div> */}
 
         <Route path="/seed-trends" element={<SeedTrends matchups={matchups} owners={owners}/>} />
+        <Route path="*" element={<Navigate to="/" replace />} />"
       </Routes>
     </div>
   );
