@@ -34,6 +34,12 @@ export const getLongestStreak = (winlosses, matchString) => {
 
 export const compileWeeklySeeds = (owners, allMatchupsInYear) => {
   const clonedOwners = [...owners];
+  
+  // Map through owners once to create owner lookup
+  const ownerMap = new Map();
+  clonedOwners.forEach(owner => {
+    ownerMap.set(owner.rosterId, owner);
+  });
 
   allMatchupsInYear.forEach((matchupWeek, weekIndex) => {
     const matchupMap = {};
@@ -50,8 +56,8 @@ export const compileWeeklySeeds = (owners, allMatchupsInYear) => {
       if (pair.length === 2) {
         const [teamA, teamB] = pair;
 
-        const ownerA = clonedOwners.find(o => o.rosterId === teamA.roster_id);
-        const ownerB = clonedOwners.find(o => o.rosterId === teamB.roster_id);
+        const ownerA = ownerMap.get(teamA.roster_id);
+        const ownerB = ownerMap.get(teamB.roster_id);
 
         if (!ownerA || !ownerB) return;
 
@@ -77,7 +83,7 @@ export const compileWeeklySeeds = (owners, allMatchupsInYear) => {
 
     // Store weekly seeds
     rankings.forEach((owner, i) => {
-      owner.seeds[`week${weekIndex + 1}`] = i + 1;
+      owner.seeds[weekIndex] = i + 1;
     });
   });
 
