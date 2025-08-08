@@ -83,7 +83,7 @@ function App() {
           userName: user.display_name,
           realName: userDictionary[user.display_name],
           standing: 0,
-          seeds: {},
+          seeds: [],
           winCount: 0,
           pointsCount: 0,
           maxPF: userMaxPF,
