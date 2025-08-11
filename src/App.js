@@ -67,14 +67,10 @@ function App() {
     const fetchLeagueData = async () => {
       const rostersRes = await fetch(rostersEndpoint);
       const rosters = await rostersRes.json();
-
       const leagueRes = await fetch(leagueEndpoint);
       const league = await leagueRes.json();
-
       const gamesPlayed = league.settings.last_scored_leg;
       const numOfRegularSeasonGames = league.settings.last_report;
-
-
       const formattedUserData = rosters.map((roster) => {
         const user = users.find((user) => user.user_id === roster.owner_id);
         const userMaxPF =
@@ -106,7 +102,6 @@ function App() {
           rosterId: roster.roster_id,
         };
       });
-
 
       const formattedWithStandings = getStandings(formattedUserData);
       setOwners(formattedWithStandings);
@@ -366,7 +361,6 @@ function App() {
                       <div className="line-chart-title">Average Score</div>
                       <div className="line-chart-selector">
                         <Select
-                        
                           className="antd-selector"
                           defaultValue="league"
                           style={{ width: 90 }}
