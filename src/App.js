@@ -4,7 +4,7 @@ import leagueAvi from "./league-avi.png";
 import { useEffect, useState } from "react";
 import { Route, Routes, Navigate } from "react-router";
 import SeedTrends from "./components/SeedTrends";
-import { getStandings, getLongestStreak } from "./utils/utils";
+import { getStandings, getLongestStreak, compileWeeklySeeds } from "./utils/utils";
 
 import { Chart as ChartJS } from "chart.js/auto";
 import { Line } from "react-chartjs-2";
@@ -23,7 +23,6 @@ import {
   userDictionary,
 } from "./config";
 import { users } from "./league-users";
-// import { DataTable } from "./components/DataTable";
 import { Select } from "antd";
 
 function App() {
@@ -71,6 +70,7 @@ function App() {
       const leagueRes = await fetch(leagueEndpoint);
       const league = await leagueRes.json();
       const gamesPlayed = league.settings.last_scored_leg;
+      const numOfRegularSeasonGames = league.settings.last_report;
       const formattedUserData = rosters.map((roster) => {
         const user = users.find((user) => user.user_id === roster.owner_id);
         const userMaxPF =
@@ -78,8 +78,7 @@ function App() {
         const userPF = roster.settings[PF] + roster.settings[PFDec] / 100;
         const userPA = roster.settings[PA] + roster.settings[PADec] / 100;
         return {
-          id: user.user_id,
-          user: user.display_name,
+          userId: user.user_id,
           userName: user.display_name,
           realName: userDictionary[user.display_name],
           standing: 0,
@@ -103,6 +102,7 @@ function App() {
           rosterId: roster.roster_id,
         };
       });
+
       const formattedWithStandings = getStandings(formattedUserData);
       setOwners(formattedWithStandings);
 
@@ -123,6 +123,8 @@ function App() {
           Promise.all(promises.map((matchupRes) => matchupRes.json()))
         )
         .then((allJson) => {
+          const ownersWithSeeds = compileWeeklySeeds(formattedWithStandings, allJson.slice(0, numOfRegularSeasonGames));
+          setOwners(ownersWithSeeds);
           const updatedMatchups = allJson.map((week, i) => {
             let combinedPoints = week.reduce((agg, b) => {
               if (b.points > bestPerformance.points) {
@@ -284,7 +286,7 @@ function App() {
                               {metadata.highestPointsFor
                                 ? metadata.highestPointsFor.realName.toLowerCase()
                                 : "..."}
-                            </div>ƒconsole
+                            </div>
                           </div>
                         </div>
                         <div className="summary-item">
@@ -368,7 +370,7 @@ function App() {
                           <Select.Option value="league">League</Select.Option>
                           {owners.map((owner) => {
                             return (
-                              <Select.Option value={owner.realName} key={owner.id}>
+                              <Select.Option value={owner.realName} key={owner.userId}>
                                 {owner.realName}
                               </Select.Option>
                             );
@@ -477,72 +479,9 @@ function App() {
               </div>
             </>
           } />
-        {/* <div className="App-header">
-        <img src={logo} height="50px" className="logo" />
-        <span className="title">Maryland League</span>
-      </div>
-      <div className="App-content">
-        <div className="dashboard-header noselect">
-          <Tag
-            onClick={() => handleSelection("standing")}
-            color={`${selections.standing ? selectedStyle : nonSelectedStyle}`}
-            className="dash-tabs"
-          >
-            Record
-          </Tag>
-          <Tag
-            onClick={() => handleSelection("PF")}
-            color={`${selections.PF ? selectedStyle : nonSelectedStyle}`}
-            className="dash-tabs"
-          >
-            Points For
-          </Tag>
-          <Tag
-            onClick={() => handleSelection("maxPF")}
-            color={`${selections.maxPF ? selectedStyle : nonSelectedStyle}`}
-            className="dash-tabs"
-          >
-            Max PF
-          </Tag>
-          <Tag
-            onClick={() => handleSelection("accuracy")}
-            color={`${selections.accuracy ? selectedStyle : nonSelectedStyle}`}
-            className="dash-tabs"
-          >
-            Start/Sit Accuracy
-          </Tag>
-          <Tag
-            onClick={() => handleSelection("leftOnBench")}
-            color={`${
-              selections.leftOnBench ? selectedStyle : nonSelectedStyle
-            }`}
-            className="dash-tabs"
-          >
-            Bench
-          </Tag>
-          <Tag
-            onClick={() => handleSelection("PA")}
-            color={`${selections.PA ? selectedStyle : nonSelectedStyle}`}
-            className="dash-tabs"
-          >
-            Points Against
-          </Tag>
-        </div>
 
-        <div
-          className="grid ag-theme-alpine-dark"
-          style={{
-            height: "70vh",
-            width: "100%",
-            textAlign: "left",
-            fontSize: "12px",
-          }}
-        >
-          <DataTable owners={owners} columnDefs={columns} />
-        </div>
-      </div> */}
 
-        <Route path="/seed-trends" element={<SeedTrends matchups={matchups} owners={owners}/>} />
+        <Route path="/seed-trends" element={<SeedTrends owners={owners}/>} />
         <Route path="*" element={<Navigate to="/" replace />} />"
       </Routes>
     </div>
