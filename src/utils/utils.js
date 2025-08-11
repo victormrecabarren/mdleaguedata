@@ -87,6 +87,5 @@ export const compileWeeklySeeds = (owners, allMatchupsInYear) => {
     });
   });
 
-  console.log("Compiled Owners with Weekly Seeds:", clonedOwners);
   return clonedOwners;
 };

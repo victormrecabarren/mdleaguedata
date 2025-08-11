@@ -542,7 +542,7 @@ function App() {
         </div>
       </div> */}
 
-        <Route path="/seed-trends" element={<SeedTrends matchups={matchups} owners={owners}/>} />
+        <Route path="/seed-trends" element={<SeedTrends owners={owners}/>} />
         <Route path="*" element={<Navigate to="/" replace />} />"
       </Routes>
     </div>
