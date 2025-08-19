@@ -9,6 +9,7 @@
     "antd": "^5.11.3",
     "bootstrap": "^5.3.2",
     "chart.js": "^4.4.0",
+    "eslint": "^8.57.1",
     "react": "^18.2.0",
     "react-bootstrap": "^2.9.1",
     "react-chartjs-2": "^5.2.0",
@@ -21,7 +22,15 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "test:commit": "react-scripts test --watchAll=false",
     "eject": "react-scripts eject",
+    "prepare": "husky",
+    "postinstall": "husky install",
+    "prettier:write": "prettier --write .",
+    "prettier:staged": "sh -c 'git diff --cached --name-only --diff-filter=ACM | xargs prettier --check'",
+    "lint": "eslint .",
+    "lint:staged": "sh -c \"git diff --cached --name-only --diff-filter=ACM | grep -E '\\\\.(js|jsx|ts|tsx)$' | xargs eslint\"",
+    "lint:commit": "npm run lint:staged && npm run prettier:staged",
     "postbuild": "cp build/index.html build/404.html",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
@@ -47,6 +56,8 @@
   "devDependencies": {
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
-    "gh-pages": "^6.1.0"
+    "gh-pages": "^6.1.0",
+    "husky": "^9.1.7",
+    "prettier": "^3.6.2"
   }
 }
