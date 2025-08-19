@@ -1,3 +1,3 @@
 const something = () => {
-  console.log("hi");
+    console.log("hi");
 };
