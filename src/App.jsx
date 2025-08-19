@@ -59,7 +59,7 @@ function App() {
 
   useEffect(() => {
     const updatedColumns = columnDefs.filter(
-      (column) => selections[column.field]
+      (column) => selections[column.field],
     );
     setCurrentColumns(updatedColumns);
   }, [selections]);
@@ -120,7 +120,7 @@ function App() {
         });
       Promise.all(matchupPromises)
         .then((promises) =>
-          Promise.all(promises.map((matchupRes) => matchupRes.json()))
+          Promise.all(promises.map((matchupRes) => matchupRes.json())),
         )
         .then((allJson) => {
           const updatedMatchups = allJson.map((week, i) => {
@@ -140,7 +140,8 @@ function App() {
               averageOutput,
               rosters: week.map((roster) => {
                 const currUser = formattedWithStandings.find(
-                  (formattedUser) => formattedUser.rosterId === roster.roster_id
+                  (formattedUser) =>
+                    formattedUser.rosterId === roster.roster_id,
                 );
                 return {
                   rosterId: roster.roster_id,
@@ -155,7 +156,7 @@ function App() {
             ...prevData,
             bestPerformance: {
               owner: formattedWithStandings.find(
-                (owner) => owner.rosterId === bestPerformance.rosterId
+                (owner) => owner.rosterId === bestPerformance.rosterId,
               ),
               score: bestPerformance.points,
               week: bestPerformance.week,
@@ -165,7 +166,6 @@ function App() {
           setMatchups(updatedMatchups);
         });
 
-        
       // Get other metadata and store in state:
       let highestPointsFor;
       let startSitAccuracy;
@@ -236,7 +236,9 @@ function App() {
               </div>
               <div className="App-navbar noselect">
                 <div className="navbar-buttons-container">
-                  <div className="nav-buttons selected-nav-button">Dashboard</div>
+                  <div className="nav-buttons selected-nav-button">
+                    Dashboard
+                  </div>
                   <div className="nav-buttons">Owners</div>
                   <div className="nav-buttons">Trends</div>
                 </div>
@@ -279,12 +281,15 @@ function App() {
                               : "..."}
                           </div>
                           <div className="summary-description-container">
-                            <div className="summary-description">Points For</div>
+                            <div className="summary-description">
+                              Points For
+                            </div>
                             <div className="summary-description-leader">
                               {metadata.highestPointsFor
                                 ? metadata.highestPointsFor.realName.toLowerCase()
                                 : "..."}
-                            </div>ƒconsole
+                            </div>
+                            ƒconsole
                           </div>
                         </div>
                         <div className="summary-item">
@@ -311,7 +316,9 @@ function App() {
                               : "..."}
                           </div>
                           <div className="summary-description-container">
-                            <div className="summary-description">Win Streak</div>
+                            <div className="summary-description">
+                              Win Streak
+                            </div>
                             <div className="summary-description-leader">
                               {metadata.longestWinStreak
                                 ? metadata.longestWinStreak.realName.toLowerCase()
@@ -322,11 +329,15 @@ function App() {
                         <div className="summary-item">
                           <div className="summary-data-point negative">
                             {metadata.benchPointsWinner
-                              ? Math.trunc(metadata.benchPointsWinner.leftOnBench)
+                              ? Math.trunc(
+                                  metadata.benchPointsWinner.leftOnBench,
+                                )
                               : "..."}
                           </div>
                           <div className="summary-description-container">
-                            <div className="summary-description">Bench Points</div>
+                            <div className="summary-description">
+                              Bench Points
+                            </div>
                             <div className="summary-description-leader">
                               {metadata.highestPointsFor
                                 ? metadata.benchPointsWinner.realName.toLowerCase()
@@ -341,7 +352,9 @@ function App() {
                               : "..."}
                           </div>
                           <div className="summary-description-container">
-                            <div className="summary-description">Loss Streak</div>
+                            <div className="summary-description">
+                              Loss Streak
+                            </div>
                             <div className="summary-description-leader">
                               {metadata.longestLossStreak
                                 ? metadata.longestLossStreak.realName.toLowerCase()
@@ -368,7 +381,10 @@ function App() {
                           <Select.Option value="league">League</Select.Option>
                           {owners.map((owner) => {
                             return (
-                              <Select.Option value={owner.realName} key={owner.id}>
+                              <Select.Option
+                                value={owner.realName}
+                                key={owner.id}
+                              >
                                 {owner.realName}
                               </Select.Option>
                             );
@@ -387,7 +403,12 @@ function App() {
                               fill: true,
                               backgroundColor: (context) => {
                                 const ctx = context.chart.ctx;
-                                const gradient = ctx.createLinearGradient(0, 0, 0, 90);
+                                const gradient = ctx.createLinearGradient(
+                                  0,
+                                  0,
+                                  0,
+                                  90,
+                                );
                                 gradient.addColorStop(0, "rgba(231,255,133,1)");
                                 gradient.addColorStop(1, "rgba(231,255,133,0)");
                                 return gradient;
@@ -399,33 +420,40 @@ function App() {
                             },
                             ...(selectedOwner && selectedOwner !== "league"
                               ? [
-                                {
-                                  label: "Points Scored",
-                                  data: matchups.map((week) => {
-                                    const currRoster = week.rosters.find(
-                                      (roster) => roster.realName === selectedOwner
-                                    );
-                                    return currRoster.points;
-                                  }),
-                                  fill: true,
-                                  backgroundColor: (context) => {
-                                    const ctx = context.chart.ctx;
-                                    const gradient = ctx.createLinearGradient(
-                                      0,
-                                      0,
-                                      0,
-                                      90
-                                    );
-                                    gradient.addColorStop(0, "rgba(0,71,255,1)");
-                                    gradient.addColorStop(1, "rgba(0,71,255,0)");
-                                    return gradient;
+                                  {
+                                    label: "Points Scored",
+                                    data: matchups.map((week) => {
+                                      const currRoster = week.rosters.find(
+                                        (roster) =>
+                                          roster.realName === selectedOwner,
+                                      );
+                                      return currRoster.points;
+                                    }),
+                                    fill: true,
+                                    backgroundColor: (context) => {
+                                      const ctx = context.chart.ctx;
+                                      const gradient = ctx.createLinearGradient(
+                                        0,
+                                        0,
+                                        0,
+                                        90,
+                                      );
+                                      gradient.addColorStop(
+                                        0,
+                                        "rgba(0,71,255,1)",
+                                      );
+                                      gradient.addColorStop(
+                                        1,
+                                        "rgba(0,71,255,0)",
+                                      );
+                                      return gradient;
+                                    },
+                                    borderColor: "rgb(0,71,255)",
+                                    borderWidth: 4,
+                                    tension: 0.1,
+                                    pointRadius: 0,
                                   },
-                                  borderColor: "rgb(0,71,255)",
-                                  borderWidth: 4,
-                                  tension: 0.1,
-                                  pointRadius: 0,
-                                },
-                              ]
+                                ]
                               : []),
                           ],
                         }}
@@ -476,7 +504,8 @@ function App() {
                 </div>
               </div>
             </>
-          } />
+          }
+        />
         {/* <div className="App-header">
         <img src={logo} height="50px" className="logo" />
         <span className="title">Maryland League</span>
@@ -541,8 +570,10 @@ function App() {
           <DataTable owners={owners} columnDefs={columns} />
         </div>
       </div> */}
-
-        <Route path="/seed-trends" element={<SeedTrends matchups={matchups} owners={owners}/>} />
+        <Route
+          path="/seed-trends"
+          element={<SeedTrends matchups={matchups} owners={owners} />}
+        />
         <Route path="*" element={<Navigate to="/" replace />} />"
       </Routes>
     </div>
