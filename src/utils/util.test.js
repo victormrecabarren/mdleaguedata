@@ -1,4 +1,5 @@
 import { compileWeeklySeeds } from "./utils";
+import { describe, it, expect } from "vitest";
 
 describe("compileWeeklySeeds", () => {
   it("should compile weekly seeds correctly", () => {

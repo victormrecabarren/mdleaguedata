@@ -1,4 +1,4 @@
-const SeedTrends = (props) => {
+const SeedTrends = () => {
   return (
     <div className="seed-trends">
       <h1>Seed Trends</h1>

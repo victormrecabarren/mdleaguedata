@@ -11,3 +11,5 @@ build
 .env.production.local
 .husky/
 .eslintrc
+.eslintignore
+.vscode/

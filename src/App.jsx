@@ -6,7 +6,6 @@ import { Route, Routes, Navigate } from "react-router";
 import SeedTrends from "./components/SeedTrends";
 import { getStandings, getLongestStreak } from "./utils/utils";
 
-import { Chart as ChartJS } from "chart.js/auto";
 import { Line } from "react-chartjs-2";
 
 import {
@@ -19,50 +18,21 @@ import {
   leagueEndpoint,
   rostersEndpoint,
   matchupsEndpoint,
-  columnDefs,
   userDictionary,
 } from "./config";
 import { users } from "./league-users";
-// import { DataTable } from "./components/DataTable";
 import { Select } from "antd";
 
 function App() {
   const [owners, setOwners] = useState([]);
   const [matchups, setMatchups] = useState([]);
   const [metadata, setMetadata] = useState({});
-  const [columns, setCurrentColumns] = useState([]);
-  const [selections, setSelections] = useState({
-    record: false,
-    user: true,
-    PF: true,
-    maxPF: true,
-    accuracy: false,
-    PA: false,
-    leftOnBench: false,
-  });
-  const [selectedOwner, setSelectedOwner] = useState();
 
-  const handleSelection = (selection) => {
-    setSelections((prevSelected) => {
-      const prevValue = prevSelected[selection];
-      const updatedSelections = {
-        ...prevSelected,
-        [selection]: !prevValue,
-      };
-      return updatedSelections;
-    });
-  };
+  const [selectedOwner, setSelectedOwner] = useState();
 
   const handleChartSelection = (selection) => {
     setSelectedOwner(selection);
   };
-
-  useEffect(() => {
-    const updatedColumns = columnDefs.filter(
-      (column) => selections[column.field],
-    );
-    setCurrentColumns(updatedColumns);
-  }, [selections]);
 
   useEffect(() => {
     const fetchLeagueData = async () => {
@@ -506,75 +476,11 @@ function App() {
             </>
           }
         />
-        {/* <div className="App-header">
-        <img src={logo} height="50px" className="logo" />
-        <span className="title">Maryland League</span>
-      </div>
-      <div className="App-content">
-        <div className="dashboard-header noselect">
-          <Tag
-            onClick={() => handleSelection("standing")}
-            color={`${selections.standing ? selectedStyle : nonSelectedStyle}`}
-            className="dash-tabs"
-          >
-            Record
-          </Tag>
-          <Tag
-            onClick={() => handleSelection("PF")}
-            color={`${selections.PF ? selectedStyle : nonSelectedStyle}`}
-            className="dash-tabs"
-          >
-            Points For
-          </Tag>
-          <Tag
-            onClick={() => handleSelection("maxPF")}
-            color={`${selections.maxPF ? selectedStyle : nonSelectedStyle}`}
-            className="dash-tabs"
-          >
-            Max PF
-          </Tag>
-          <Tag
-            onClick={() => handleSelection("accuracy")}
-            color={`${selections.accuracy ? selectedStyle : nonSelectedStyle}`}
-            className="dash-tabs"
-          >
-            Start/Sit Accuracy
-          </Tag>
-          <Tag
-            onClick={() => handleSelection("leftOnBench")}
-            color={`${
-              selections.leftOnBench ? selectedStyle : nonSelectedStyle
-            }`}
-            className="dash-tabs"
-          >
-            Bench
-          </Tag>
-          <Tag
-            onClick={() => handleSelection("PA")}
-            color={`${selections.PA ? selectedStyle : nonSelectedStyle}`}
-            className="dash-tabs"
-          >
-            Points Against
-          </Tag>
-        </div>
-
-        <div
-          className="grid ag-theme-alpine-dark"
-          style={{
-            height: "70vh",
-            width: "100%",
-            textAlign: "left",
-            fontSize: "12px",
-          }}
-        >
-          <DataTable owners={owners} columnDefs={columns} />
-        </div>
-      </div> */}
         <Route
           path="/seed-trends"
           element={<SeedTrends matchups={matchups} owners={owners} />}
         />
-        <Route path="*" element={<Navigate to="/" replace />} />"
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </div>
   );

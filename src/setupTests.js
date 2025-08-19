@@ -5,5 +5,7 @@
 import "@testing-library/jest-dom";
 import { TextEncoder, TextDecoder } from "util";
 
+// eslint-disable-next-line no-global-assign, no-undef
 global.TextEncoder = TextEncoder;
+// eslint-disable-next-line no-global-assign, no-undef
 global.TextDecoder = TextDecoder;
