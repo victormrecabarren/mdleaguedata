@@ -29,7 +29,7 @@
     "prettier:write": "prettier --write .",
     "prettier:staged": "sh -c 'git diff --cached --name-only --diff-filter=ACM | xargs prettier --check || (echo \"\\n\\033[31mPrettier check failed.\\033[31m Run \\`npm run prettier:staged:write\\` to fix formatting.\" && exit 1)'",
     "prettier:staged:write": "sh -c 'git diff --cached --name-only --diff-filter=ACM | xargs prettier --write'",
-    "lint": "eslint .",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:staged": "sh -c \"git diff --cached --name-only --diff-filter=ACM | grep -E '\\\\.(js|jsx|ts|tsx)$' | xargs eslint\"",
     "lint:commit": "npm run lint:staged && npm run prettier:staged",
     "test": "vitest",
